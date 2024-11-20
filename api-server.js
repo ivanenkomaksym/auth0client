@@ -39,4 +39,16 @@ app.get("/api/external", checkJwt, (req, res) => {
   });
 });
 
+const checkWeatherForecastJwt = auth({
+  audience: "http://localhost:3000/external-api/weatherforecast",
+  issuerBaseURL: `https://${authConfig.domain}/`,
+  algorithms: ["RS256"],
+});
+
+app.get("/api/weatherforecast", checkWeatherForecastJwt, (req, res) => {
+  res.send({
+    msg: "You got access to 'WeatherForecast' API. Your access token was successfully validated!",
+  });
+});
+
 app.listen(port, () => console.log(`API Server listening on port ${port}`));

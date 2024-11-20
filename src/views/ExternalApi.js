@@ -79,6 +79,33 @@ export const ExternalApiComponent = () => {
     }
   };
 
+  const callWeatherForecastApi = async () => {
+    const response = null;
+    try {
+      const token = await getAccessTokenSilently();
+
+      response = await fetch(`${apiOrigin}/api/weatherforecast`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const responseData = await response.json();
+
+      setState({
+        ...state,
+        showResult: true,
+        apiMessage: responseData,
+      });
+    } catch (error) {
+      console.log(response);
+      setState({
+        ...state,
+        showResult: true
+      });
+    }
+  };
+
   const handle = (e, fn) => {
     e.preventDefault();
     fn();
@@ -179,6 +206,18 @@ export const ExternalApiComponent = () => {
         >
           Ping API
         </Button>
+
+        <div></div>
+        
+        <Button
+          color="primary"
+          className="mt-5"
+          onClick={callWeatherForecastApi}
+          disabled={!audience}
+        >
+          Ping WeatherForecast
+        </Button>
+
       </div>
 
       <div className="result-block-container">
