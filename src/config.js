@@ -12,9 +12,12 @@ export function getConfig() {
       ? configJson.audience
       : null;
 
+  console.log("REACT_APP_CLIENT_ID", process.env.REACT_APP_CLIENT_ID);
+  const clientId = process.env.REACT_APP_CLIENT_ID || configJson.clientId;
+
   return {
     domain: configJson.domain,
-    clientId: configJson.clientId,
+    clientId: clientId,
     ...(audience ? { audience } : null),
   };
 }
