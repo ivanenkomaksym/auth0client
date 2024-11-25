@@ -7,8 +7,11 @@ const authConfig = require("./src/auth_config.json");
 
 const app = express();
 
-const port = process.env.API_PORT || 3001;
-const appPort = process.env.SERVER_PORT || 3000;
+process.env.PORT = process.env.REACT_APP_API_PORT;
+console.log("REACT_APP_API_PORT", process.env.REACT_APP_API_PORT);
+console.log("REACT_APP_SERVER_PORT", process.env.REACT_APP_SERVER_PORT);
+const port = process.env.REACT_APP_API_PORT || 3001;
+const appPort = process.env.REACT_APP_SERVER_PORT || 3000;
 const appOrigin = authConfig.appOrigin || `http://localhost:${appPort}`;
 
 if (

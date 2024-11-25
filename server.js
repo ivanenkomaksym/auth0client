@@ -5,7 +5,8 @@ const { join } = require("path");
 
 const app = express();
 
-const port = process.env.SERVER_PORT || 3000;
+console.log("REACT_APP_SERVER_PORT", process.env.REACT_APP_SERVER_PORT);
+const port = process.env.REACT_APP_SERVER_PORT || 3000;
 
 app.use(morgan("dev"));
 

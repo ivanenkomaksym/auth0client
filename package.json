@@ -4,6 +4,9 @@
   "private": true,
   "scripts": {
     "start": "npm-run-all --parallel spa api-server",
+    "start:easyclean": "dotenv -e .env.easyclean react-scripts start",
+    "start:fixitnow": "dotenv -e .env.fixitnow react-scripts start",
+    "start:weatherforecast": "dotenv -e .env.weatherforecast react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
@@ -42,6 +45,7 @@
   "devDependencies": {
     "@testing-library/jest-dom": "^5.17",
     "@testing-library/react": "^14.1",
+    "dotenv-cli": "^7.4.4",
     "jest-environment-jsdom": "^27.0",
     "jest-fetch-mock": "^3.0",
     "nodemon": "^2.0"
