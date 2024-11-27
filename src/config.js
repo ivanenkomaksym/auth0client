@@ -13,6 +13,7 @@ export function getConfig() {
       : null;
 
   console.log("REACT_APP_CLIENT_ID", process.env.REACT_APP_CLIENT_ID);
+  console.log("audience", audience);
   const clientId = process.env.REACT_APP_CLIENT_ID || configJson.clientId;
 
   return {

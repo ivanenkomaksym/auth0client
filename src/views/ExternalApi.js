@@ -4,6 +4,7 @@ import Highlight from "../components/Highlight";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import { getConfig } from "../config";
 import Loading from "../components/Loading";
+import axios from "axios"
 
 export const ExternalApiComponent = () => {
   const { apiOrigin = `http://localhost:${process.env.REACT_APP_API_PORT}`, audience } = getConfig();
@@ -13,6 +14,8 @@ export const ExternalApiComponent = () => {
     apiMessage: "",
     error: null,
   });
+
+  const [weatherData, setWeatherData] = useState(null);
 
   const {
     getAccessTokenSilently,
@@ -94,22 +97,20 @@ export const ExternalApiComponent = () => {
     try {
       const token = await getAccessTokenSilently();
 
-      response = await fetch(`${apiOrigin}/api/weatherforecast`, {
+      const instance = axios.create({
         headers: {
-          Authorization: `Bearer ${token}`,
-        },
+          'Authorization': `Bearer ${token}`,
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json',
+          mode: 'no-cors'
+        }
       });
 
-      const responseData = response.ok ? await response.json() : await response.text();
-      console.log("responseData: ", responseData);
-
-      setState({
-        ...state,
-        showResult: true,
-        apiMessage: responseData,
-        error: null
-      });
+      response = await instance.get(`${process.env.REACT_APP_EXTERNAL_API_URL}`);
+      const result = response.data;
+      setWeatherData(result);
     } catch (error) {
+      console.log("setting error state with error: ", response);
       setState({
         ...state,
         showResult: true,
@@ -221,7 +222,7 @@ export const ExternalApiComponent = () => {
         </Button>
 
         <div></div>
-        
+
         <Button
           color="primary"
           className="mt-5"
@@ -232,7 +233,31 @@ export const ExternalApiComponent = () => {
         </Button>
 
       </div>
-
+      {weatherData && (
+        <div>
+          <h2>Weather Forecast</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Temperature (°C)</th>
+                <th>Temperature (°F)</th>
+                <th>Summary</th>
+              </tr>
+            </thead>
+            <tbody>
+              {weatherData.map((forecast, index) => (
+                <tr key={index}>
+                  <td>{forecast.date}</td>
+                  <td>{forecast.temperatureC}</td>
+                  <td>{forecast.temperatureF}</td>
+                  <td>{forecast.summary}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
       <div className="result-block-container">
         {state.showResult && (
           <div className="result-block" data-testid="api-result">
