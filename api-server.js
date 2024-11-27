@@ -7,7 +7,7 @@ const authConfig = require("./src/auth_config.json");
 
 const app = express();
 
-process.env.PORT = process.env.REACT_APP_API_PORT;
+process.env.REACT_APP_SERVER_PORT = process.env.PORT;
 console.log("REACT_APP_API_PORT", process.env.REACT_APP_API_PORT);
 console.log("REACT_APP_SERVER_PORT", process.env.REACT_APP_SERVER_PORT);
 const port = process.env.REACT_APP_API_PORT || 3001;

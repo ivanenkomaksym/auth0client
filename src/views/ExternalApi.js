@@ -6,7 +6,7 @@ import { getConfig } from "../config";
 import Loading from "../components/Loading";
 
 export const ExternalApiComponent = () => {
-  const { apiOrigin = "http://localhost:3001", audience } = getConfig();
+  const { apiOrigin = `http://localhost:${process.env.REACT_APP_API_PORT}`, audience } = getConfig();
 
   const [state, setState] = useState({
     showResult: false,
@@ -55,6 +55,10 @@ export const ExternalApiComponent = () => {
   };
 
   const callApi = async () => {
+    setState({
+      ...state,
+      showResult: false,
+    });
     try {
       const token = await getAccessTokenSilently();
 
@@ -64,7 +68,8 @@ export const ExternalApiComponent = () => {
         },
       });
 
-      const responseData = await response.json();
+      const responseData = response.ok ? await response.json() : await response.text();
+      console.log("responseData: ", responseData);
 
       setState({
         ...state,
@@ -72,15 +77,20 @@ export const ExternalApiComponent = () => {
         apiMessage: responseData,
       });
     } catch (error) {
+      const errorMessage = error.response?.headers?.get('www-authenticate') || error.message || error;
       setState({
         ...state,
-        error: error.error,
+        error: errorMessage,
       });
     }
   };
 
   const callWeatherForecastApi = async () => {
-    const response = null;
+    setState({
+      ...state,
+      showResult: false,
+    });
+    let response = null;
     try {
       const token = await getAccessTokenSilently();
 
@@ -90,18 +100,21 @@ export const ExternalApiComponent = () => {
         },
       });
 
-      const responseData = await response.json();
+      const responseData = response.ok ? await response.json() : await response.text();
+      console.log("responseData: ", responseData);
 
       setState({
         ...state,
         showResult: true,
         apiMessage: responseData,
+        error: null
       });
     } catch (error) {
-      console.log(response);
       setState({
         ...state,
-        showResult: true
+        showResult: true,
+        apiMessage: null,
+        error: response,
       });
     }
   };
@@ -225,7 +238,19 @@ export const ExternalApiComponent = () => {
           <div className="result-block" data-testid="api-result">
             <h6 className="muted">Result</h6>
             <Highlight>
-              <span>{JSON.stringify(state.apiMessage, null, 2)}</span>
+              <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word', fontFamily: 'monospace' }}>
+                {typeof state.apiMessage === "object"
+                  ? JSON.stringify(state.apiMessage, null, 2)
+                  : <span dangerouslySetInnerHTML={{ __html: state.apiMessage }} />}
+              </pre>
+            </Highlight>
+          </div>
+        )}
+        {state.error && (
+          <div className="error-block" data-testid="api-error">
+            <h6 className="text-danger">Error</h6>
+            <Highlight>
+              <span>state.error</span>
             </Highlight>
           </div>
         )}
