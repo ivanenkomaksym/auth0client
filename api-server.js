@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 const helmet = require("helmet");
+const axios = require('axios');
 const { auth } = require("express-oauth2-jwt-bearer");
 const authConfig = require("./src/auth_config.json");
 
@@ -40,6 +41,38 @@ app.get("/api/external", checkJwt, (req, res) => {
   res.send({
     msg: "Your access token was successfully validated!",
   });
+});
+
+
+// API to return all unique groups
+app.get('/groups', async (req, res) => {
+  const token = req.headers.authorization?.split(' ')[1]; // Extract token from the Authorization header
+
+  if (!token) {
+    return res.status(401).json({ error: 'Authorization token is required' });
+  }
+
+  try {
+    // Fetch users from Auth0 Management API
+    const usersResponse = await axios.get('https://mivanenko.eu.auth0.com/api/v2/users', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const users = usersResponse.data;
+
+    // Extract all groups from user metadata
+    const allGroups = users.flatMap(user => user?.groups || []);
+
+    // Get unique groups
+    const uniqueGroups = [...new Set(allGroups)];
+
+    res.json(uniqueGroups);
+  } catch (error) {
+    console.error('Error fetching unique groups:', error.response?.data || error.message);
+    res.status(500).json({ error: 'Failed to fetch unique groups' });
+  }
 });
 
 const checkWeatherForecastJwt = auth({
