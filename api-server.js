@@ -75,6 +75,36 @@ app.get('/groups', async (req, res) => {
   }
 });
 
+app.get('/groups/:groupId/users', async (req, res) => {
+  const token = req.headers.authorization?.split(' ')[1]; // Extract token from the Authorization header
+  const { groupId } = req.params; // Get the groupId from the URL
+
+  if (!token) {
+    return res.status(401).json({ error: 'Authorization token is required' });
+  }
+
+  try {
+    // Fetch users from Auth0 Management API
+    const usersResponse = await axios.get('https://mivanenko.eu.auth0.com/api/v2/users', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const users = usersResponse.data;
+
+    // Filter users who belong to the specified groupId
+    const filteredUsers = users.filter(user => 
+      user?.groups?.includes(groupId)
+    );
+
+    res.json(filteredUsers);
+  } catch (error) {
+    console.error(`Error fetching users for group ${groupId}:`, error.response?.data || error.message);
+    res.status(500).json({ error: 'Failed to fetch users for the specified group' });
+  }
+});
+
 const checkWeatherForecastJwt = auth({
   audience: "http://localhost:3000/external-api/weatherforecast",
   issuerBaseURL: `https://${authConfig.domain}/`,
