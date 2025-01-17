@@ -1,3 +1,31 @@
+# How to run multiple environments
+
+This repository is configured to run with different environment configured in corresponding `.env` file. Each is using different Auth0 application.
+
+- EasyClean
+
+```bash
+npm run start:easyclean
+```
+
+Will run on `http://localhost:3000`.
+
+- FixItNow
+ 
+```bash
+npm run start:fixitnow
+```
+
+Will run on `http://localhost:4000`.
+
+- WeatherForecast
+
+```bash
+npm run start:weatherforecast
+```
+
+Will run on `http://localhost:5000`.
+
 # Auth0 React SDK Sample Application
 
 This sample demonstrates the integration of [Auth0 React SDK](https://github.com/auth0/auth0-react) into a React application created using [create-react-app](https://reactjs.org/docs/create-a-new-react-app.html). The sample is a companion to the [Auth0 React SDK Quickstart](https://auth0.com/docs/quickstart/spa/react).
