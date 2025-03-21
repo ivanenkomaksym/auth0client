@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useEffect } from "react";
 import { NavLink as RouterNavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -25,9 +26,29 @@ const NavBar = () => {
   const {
     user,
     isAuthenticated,
+    isLoading,
     loginWithRedirect,
     logout,
+    getAccessTokenSilently
   } = useAuth0();
+
+  useEffect(() => {
+    const attemptSilentAuth = async () => {
+      try {
+        console.log("Attempting silent authentication.")
+        // Check if the user has a valid session
+        await getAccessTokenSilently();
+      } catch (err) {
+        console.warn("Silent authentication failed:", err);
+        // Do nothing, let the user click login manually
+      }
+    };
+
+    if (!isAuthenticated && !isLoading) {
+      attemptSilentAuth();
+    }
+  }, [isAuthenticated, isLoading, getAccessTokenSilently]);
+
   const toggle = () => setIsOpen(!isOpen);
 
   const logoutWithRedirect = () =>
