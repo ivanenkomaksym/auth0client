@@ -17,14 +17,17 @@ export function getConfig() {
   const appOrigin = `http://localhost:${appPort}`;
   const domain = process.env.REACT_APP_DOMAIN;
   const audience = process.env.REACT_APP_AUDIENCE;
+  const organization = process.env.REACT_APP_ORGANIZATION;
   console.log("domain", domain);
   console.log("audience", audience);
+  console.log("organization", organization);
 
   return {
     domain: domain,
     clientId: clientId,
     ...(audience ? { audience } : null),
     port: port,
-    appOrigin: appOrigin
+    appOrigin: appOrigin,
+    organization: organization,
   };
 }
